@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtue's Math Sanctuary ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root{
+      --brown-deep:#3E1F00;
+      --brown-rich:#6B3A1F;
+      --brown-warm:#A0522D;
+      --brown-mid:#C4845A;
+      --brown-light:#E8C4A2;
+      --brown-blush:#F5E6D8;
+      --cream:#FDF6EE;
+      --gold:#C9943A;
+      --gold-light:#F0D080;
+      --green:#2D6A4F;
+      --green-bg:#EDFAF4;
+      --green-border:#B2E5CC;
+      --red:#9B2020;
+      --red-bg:#FDECEA;
+      --red-border:#F5C6C6;
+      --text-dark:#2A1200;
+      --text-mid:#6B4226;
+      --text-soft:#9B6B4A;
+    }
+
+    body{
+      background:var(--cream);
+      font-family:'DM Sans',sans-serif;
+      color:var(--text-dark);
+      min-height:100vh;
+    }
+
+    /* ── SCREEN SYSTEM ── */
+    .screen{display:none}
+    .screen.active{display:block}
+
+    /* ══════════════════════════════════════
+       WELCOME SCREEN
+    ══════════════════════════════════════ */
+    .welcome{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:32px 24px;
+      text-align:center;
+    }
+    .welcome-orb{
+      width:110px;height:110px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--brown-rich),var(--brown-warm),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      font-size:46px;
+      margin-bottom:28px;
+      box-shadow:0 8px 32px rgba(107,58,31,0.25);
+      animation:float 4s ease-in-out infinite;
+    }
+    @keyframes float{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-10px)}
+    }
+    .welcome h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(28px,6vw,42px);
+      color:var(--brown-deep);
+      line-height:1.2;
+      margin-bottom:10px;
+    }
+    .welcome h1 em{color:var(--brown-warm);font-style:italic}
+    .welcome-sub{
+      font-size:15px;color:var(--text-soft);
+      font-weight:300;margin-bottom:36px;
+      max-width:340px;line-height:1.6;
+    }
+
+    /* High score banner */
+    .hs-banner{
+      background:var(--brown-blush);
+      border:1px solid var(--brown-light);
+      border-radius:12px;
+      padding:12px 24px;
+      margin-bottom:32px;
+      font-size:13px;
+      color:var(--text-mid);
+      display:none;
+    }
+    .hs-banner.show{display:block}
+    .hs-banner strong{
+      font-family:'Playfair Display',serif;
+      font-size:20px;
+      color:var(--brown-warm);
+      display:block;
+    }
+
+    /* Difficulty grid */
+    .diff-label{
+      font-size:11px;letter-spacing:3px;
+      text-transform:uppercase;
+      color:var(--text-soft);font-weight:500;
+      margin-bottom:14px;
+    }
+    .diff-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:12px;max-width:380px;width:100%;
+      margin-bottom:32px;
+    }
+    .diff-card{
+      border:2px solid var(--brown-light);
+      border-radius:16px;
+      padding:18px 12px;
+      cursor:pointer;
+      background:#fff;
+      transition:all 0.2s;
+      text-align:center;
+    }
+    .diff-card:hover{border-color:var(--brown-warm);transform:translateY(-2px);box-shadow:0 6px 20px rgba(107,58,31,0.12)}
+    .diff-card.selected{
+      border-color:var(--brown-warm);
+      background:var(--brown-blush);
+    }
+    .diff-card .diff-icon{font-size:26px;margin-bottom:6px}
+    .diff-card .diff-name{
+      font-family:'Playfair Display',serif;
+      font-size:14px;font-weight:700;
+      color:var(--brown-deep);
+    }
+    .diff-card .diff-desc{
+      font-size:11px;color:var(--text-soft);
+      margin-top:4px;line-height:1.4;
+    }
+
+    .start-btn{
+      background:linear-gradient(135deg,var(--brown-rich),var(--brown-warm));
+      color:#fff;border:none;
+      border-radius:99px;
+      padding:16px 48px;
+      font-family:'DM Sans',sans-serif;
+      font-size:15px;font-weight:600;
+      cursor:pointer;
+      box-shadow:0 4px 20px rgba(107,58,31,0.3);
+      transition:all 0.2s;
+      letter-spacing:0.5px;
+    }
+    .start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(107,58,31,0.35)}
+    .start-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none}
+
+    /* ══════════════════════════════════════
+       QUIZ SCREEN
+    ══════════════════════════════════════ */
+    .quiz-header{
+      background:linear-gradient(135deg,var(--brown-deep),var(--brown-rich));
+      padding:20px 24px;
+      display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:10;
+    }
+    .quiz-header-left{display:flex;flex-direction:column;gap:2px}
+    .quiz-header-title{
+      font-family:'Playfair Display',serif;
+      font-size:16px;color:#fff;font-weight:700;
+    }
+    .quiz-diff-badge{
+      font-size:10px;letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--brown-light);font-weight:500;
+    }
+    .stats-row{display:flex;gap:16px}
+    .stat-box{
+      text-align:center;
+      background:rgba(255,255,255,0.08);
+      border-radius:10px;padding:6px 14px;
+    }
+    .stat-val{
+      font-family:'Playfair Display',serif;
+      font-size:20px;color:#fff;font-weight:700;line-height:1;
+    }
+    .stat-label{font-size:10px;color:var(--brown-light);letter-spacing:1px;text-transform:uppercase}
+    .streak-fire{font-size:14px}
+
+    .quit-btn{
+      background:rgba(255,255,255,0.1);
+      border:1px solid rgba(255,255,255,0.2);
+      color:#fff;border-radius:99px;
+      padding:6px 16px;font-size:12px;
+      cursor:pointer;font-family:'DM Sans',sans-serif;
+      transition:background 0.2s;
+    }
+    .quit-btn:hover{background:rgba(255,255,255,0.2)}
+
+    /* Question card */
+    .quiz-body{
+      max-width:600px;margin:0 auto;
+      padding:32px 24px 60px;
+    }
+
+    .q-meta{
+      display:flex;align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .q-type-badge{
+      font-size:11px;letter-spacing:2px;
+      text-transform:uppercase;font-weight:500;
+      padding:4px 12px;border-radius:99px;
+    }
+    .type-arithmetic{background:#F3EDE8;color:var(--brown-warm)}
+    .type-algebra{background:#FFF4E0;color:#8B5E00}
+    .type-word{background:var(--brown-blush);color:var(--brown-rich)}
+    .q-number{font-size:12px;color:var(--text-soft);font-weight:500}
+
+    .question-card{
+      background:#fff;
+      border:1px solid var(--brown-light);
+      border-radius:20px;
+      padding:32px 28px;
+      margin-bottom:24px;
+      box-shadow:0 2px 16px rgba(107,58,31,0.06);
+      min-height:140px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .question-text{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(18px,4vw,26px);
+      color:var(--text-dark);
+      text-align:center;
+      line-height:1.5;
+    }
+    .question-text .math{
+      font-family:'DM Mono',monospace;
+      font-size:clamp(20px,4.5vw,30px);
+      color:var(--brown-rich);
+      display:block;margin-top:10px;
+    }
+
+    /* Answer input */
+    .answer-row{
+      display:flex;gap:12px;margin-bottom:20px;
+    }
+    .answer-input{
+      flex:1;
+      border:2px solid var(--brown-light);
+      border-radius:14px;
+      padding:16px 20px;
+      font-family:'DM Mono',monospace;
+      font-size:20px;
+      color:var(--text-dark);
+      background:#fff;
+      outline:none;
+      transition:border-color 0.2s;
+      text-align:center;
+    }
+    .answer-input:focus{border-color:var(--brown-warm)}
+    .answer-input.correct{border-color:#2D6A4F;background:var(--green-bg)}
+    .answer-input.wrong{border-color:var(--red);background:var(--red-bg)}
+
+    .submit-btn{
+      background:var(--brown-warm);
+      color:#fff;border:none;
+      border-radius:14px;
+      padding:16px 28px;
+      font-size:15px;font-weight:600;
+      cursor:pointer;
+      font-family:'DM Sans',sans-serif;
+      transition:background 0.2s;
+      white-space:nowrap;
+    }
+    .submit-btn:hover{background:var(--brown-rich)}
+
+    /* Feedback */
+    .feedback-box{
+      border-radius:14px;
+      padding:16px 20px;
+      font-size:14px;
+      font-weight:500;
+      line-height:1.5;
+      margin-bottom:20px;
+      display:none;
+      animation:slideUp 0.25s ease;
+    }
+    @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .feedback-box.correct{
+      background:var(--green-bg);
+      border:1px solid var(--green-border);
+      color:var(--green);
+      display:block;
+    }
+    .feedback-box.wrong{
+      background:var(--red-bg);
+      border:1px solid var(--red-border);
+      color:var(--red);
+      display:block;
+    }
+    .feedback-box .solution{
+      font-family:'DM Mono',monospace;
+      font-size:15px;
+      margin-top:6px;
+      color:var(--text-mid);
+    }
+
+    .next-btn{
+      width:100%;
+      background:linear-gradient(135deg,var(--brown-rich),var(--brown-warm));
+      color:#fff;border:none;
+      border-radius:14px;
+      padding:16px;
+      font-size:15px;font-weight:600;
+      cursor:pointer;
+      font-family:'DM Sans',sans-serif;
+      transition:all 0.2s;
+      display:none;
+      letter-spacing:0.3px;
+    }
+    .next-btn.show{display:block}
+    .next-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(107,58,31,0.25)}
+
+    /* Motivational streak bar */
+    .streak-msg{
+      text-align:center;
+      font-size:13px;
+      color:var(--brown-warm);
+      font-style:italic;
+      min-height:20px;
+      margin-bottom:8px;
+      transition:opacity 0.3s;
+    }
+
+    /* ══════════════════════════════════════
+       END SCREEN
+    ══════════════════════════════════════ */
+    .end-screen{
+      min-height:100vh;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      padding:32px 24px;text-align:center;
+    }
+    .end-trophy{font-size:72px;margin-bottom:20px;animation:float 3s ease-in-out infinite}
+    .end-screen h2{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(24px,5vw,36px);
+      color:var(--brown-deep);margin-bottom:8px;
+    }
+    .end-screen p{font-size:14px;color:var(--text-soft);margin-bottom:32px;line-height:1.6;max-width:320px}
+    .end-stats{
+      display:flex;gap:16px;margin-bottom:36px;flex-wrap:wrap;justify-content:center;
+    }
+    .end-stat{
+      background:#fff;border:1px solid var(--brown-light);
+      border-radius:16px;padding:20px 24px;min-width:110px;
+    }
+    .end-stat-val{
+      font-family:'Playfair Display',serif;
+      font-size:32px;color:var(--brown-warm);font-weight:700;
+    }
+    .end-stat-label{font-size:12px;color:var(--text-soft);margin-top:4px}
+    .new-hs-badge{
+      background:linear-gradient(135deg,var(--gold),var(--gold-light));
+      color:var(--brown-deep);
+      border-radius:99px;padding:8px 20px;
+      font-size:12px;font-weight:600;
+      letter-spacing:1px;text-transform:uppercase;
+      margin-bottom:28px;display:none;
+    }
+    .new-hs-badge.show{display:inline-block}
+    .end-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .play-again-btn{
+      background:linear-gradient(135deg,var(--brown-rich),var(--brown-warm));
+      color:#fff;border:none;border-radius:99px;
+      padding:14px 36px;font-size:14px;font-weight:600;
+      cursor:pointer;font-family:'DM Sans',sans-serif;
+      transition:all 0.2s;
+    }
+    .play-again-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(107,58,31,0.3)}
+    .change-diff-btn{
+      background:#fff;color:var(--brown-warm);
+      border:2px solid var(--brown-light);border-radius:99px;
+      padding:14px 36px;font-size:14px;font-weight:600;
+      cursor:pointer;font-family:'DM Sans',sans-serif;
+      transition:all 0.2s;
+    }
+    .change-diff-btn:hover{border-color:var(--brown-warm)}
+
+    canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:999}
+
+    @media(max-width:480px){
+      .diff-grid{grid-template-columns:1fr;max-width:260px}
+      .answer-row{flex-direction:column}
+      .submit-btn{width:100%}
+      .stats-row{gap:10px}
+      .stat-box{padding:6px 10px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ WELCOME SCREEN ══ -->
+<div class="screen active" id="screen-welcome">
+  <div class="welcome">
+    <div class="welcome-orb">🧮</div>
+    <h1>Virtue's<br/><em>Math Sanctuary</em></h1>
+    <p class="welcome-sub">Clear your mind. Sharpen your focus. Solve until the world gets quiet. 🤎</p>
+
+    <div class="hs-banner" id="hs-banner">
+      Your personal best
+      <strong id="hs-val">0</strong>
+    </div>
+
+    <div class="diff-label">Choose your challenge</div>
+    <div class="diff-grid">
+      <div class="diff-card" data-diff="easy">
+        <!-- <div class="diff-icon">🌸</div> -->
+        <div class="diff-name">Easy</div>
+        <div class="diff-desc">Arithmetic & simple equations. Warm up gently.</div>
+      </div>
+      <div class="diff-card" data-diff="medium">
+        <!-- <div class="diff-icon">✨</div> -->
+        <div class="diff-name">Medium</div>
+        <div class="diff-desc">Mixed operations & moderate algebra. Stay focused.</div>
+      </div>
+      <div class="diff-card" data-diff="hard">
+        <!-- <div class="diff-icon">🔥</div> -->
+        <div class="diff-name">Hard</div>
+        <div class="diff-desc">Tough algebra & complex word problems. Think deep.</div>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn" disabled>Pick a difficulty to begin</button>
+  </div>
+</div>
+
+<!-- ══ QUIZ SCREEN ══ -->
+<div class="screen" id="screen-quiz">
+  <div class="quiz-header">
+    <div class="quiz-header-left">
+      <div class="quiz-header-title">Math Sanctuary</div>
+      <div class="quiz-diff-badge" id="diff-label-header">— Easy</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" id="stat-score">0</div>
+        <div class="stat-label">Score</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-streak">0 <span class="streak-fire">🔥</span></div>
+        <div class="stat-label">Streak</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-q">1</div>
+        <div class="stat-label">Q No.</div>
+      </div>
+    </div>
+    <button class="quit-btn" id="quit-btn">Quit</button>
+  </div>
+
+  <div class="quiz-body">
+    <div class="streak-msg" id="streak-msg"></div>
+    <div class="q-meta">
+      <span class="q-type-badge" id="q-type-badge">Arithmetic</span>
+      <span class="q-number" id="q-number">Question 1</span>
+    </div>
+    <div class="question-card">
+      <div class="question-text" id="question-text"></div>
+    </div>
+    <div class="answer-row">
+      <input class="answer-input" id="answer-input" type="text" placeholder="Your answer…" autocomplete="off" inputmode="decimal"/>
+      <button class="submit-btn" id="submit-btn">Check</button>
+    </div>
+    <div class="feedback-box" id="feedback-box"></div>
+    <button class="next-btn" id="next-btn">Next Question →</button>
+  </div>
+</div>
+
+<!-- ══ END SCREEN ══ -->
+<div class="screen" id="screen-end">
+  <div class="end-screen">
+    <div class="end-trophy" id="end-trophy">🏆</div>
+    <h2 id="end-title">Great session, Virtue!</h2>
+    <p id="end-msg">You solved every one with focus and grace. That's your superpower.</p>
+    <div class="new-hs-badge" id="new-hs-badge">🌟 New Personal Best!</div>
+    <div class="end-stats">
+      <div class="end-stat">
+        <div class="end-stat-val" id="end-score">0</div>
+        <div class="end-stat-label">Final Score</div>
+      </div>
+      <div class="end-stat">
+        <div class="end-stat-val" id="end-correct">0</div>
+        <div class="end-stat-label">Correct</div>
+      </div>
+      <div class="end-stat">
+        <div class="end-stat-val" id="end-streak">0</div>
+        <div class="end-stat-label">Best Streak</div>
+      </div>
+      <div class="end-stat">
+        <div class="end-stat-val" id="end-total">0</div>
+        <div class="end-stat-label">Attempted</div>
+      </div>
+    </div>
+    <div class="end-btns">
+      <button class="play-again-btn" id="play-again-btn">Play Again 🌸</button>
+      <button class="change-diff-btn" id="change-diff-btn">Change Difficulty</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+// ════════════════════════════════════════
+//  QUESTION ENGINE
+// ════════════════════════════════════════
+const R = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+// ── EASY ──────────────────────────────
+function easyArithmetic(){
+  const ops = ['+','-','×','÷'];
+  const op = pick(ops);
+  let a,b,ans,expr;
+  if(op==='+'){a=R(10,99);b=R(10,99);ans=a+b;expr=`${a} + ${b}`}
+  else if(op==='-'){a=R(30,99);b=R(10,a);ans=a-b;expr=`${a} − ${b}`}
+  else if(op==='×'){a=R(2,12);b=R(2,12);ans=a*b;expr=`${a} × ${b}`}
+  else{a=R(2,9);b=R(2,9);ans=b;expr=`${a*b} ÷ ${a}`}
+  return{type:'arithmetic',question:`What is`,math:expr,answer:ans,solution:`${expr} = ${ans}`}
+}
+function easyAlgebra(){
+  const a=R(2,9),b=R(1,20),ans=R(2,15);
+  const c=a*ans+b;
+  return{type:'algebra',question:`Solve for x`,math:`${a}x + ${b} = ${c}`,answer:ans,solution:`x = ${ans}`}
+}
+
+// ── MEDIUM ────────────────────────────
+function mediumArithmetic(){
+  const type=R(1,3);
+  if(type===1){
+    const a=R(10,50),b=R(10,50),c=R(2,9);
+    const ans=a*b+c; // no, let's do BODMAS
+    return{type:'arithmetic',question:`Calculate`,math:`(${a} + ${b}) × ${c}`,answer:(a+b)*c,solution:`(${a}+${b})×${c} = ${a+b}×${c} = ${(a+b)*c}`}
+  }else if(type===2){
+    const a=R(100,500),pct=pick([10,15,20,25,50]);
+    const ans=a*pct/100;
+    return{type:'arithmetic',question:`What is ${pct}% of`,math:`${a}`,answer:ans,solution:`${pct}% × ${a} = ${ans}`}
+  }else{
+    const a=R(2,9),b=R(2,9),c=R(2,9);
+    return{type:'arithmetic',question:`Evaluate`,math:`${a}² + ${b}² − ${c}`,answer:a*a+b*b-c,solution:`${a*a} + ${b*b} − ${c} = ${a*a+b*b-c}`}
+  }
+}
+function mediumAlgebra(){
+  const type=R(1,3);
+  if(type===1){
+    const a=R(2,8),b=R(2,8),c=R(1,10),ans=R(2,10);
+    const rhs=a*ans+b*ans-c;
+    return{type:'algebra',question:`Solve for x`,math:`${a}x + ${b}x − ${c} = ${rhs}`,answer:ans,solution:`${a+b}x = ${rhs+c}, x = ${ans}`}
+  }else if(type===2){
+    const x=R(2,10),y=R(2,10);
+    return{type:'algebra',question:`If x = ${x} and y = ${y}, find`,math:`3x² − 2y + x`,answer:3*x*x-2*y+x,solution:`3(${x*x}) − ${2*y} + ${x} = ${3*x*x-2*y+x}`}
+  }else{
+    const a=R(2,6),b=R(1,8),ans=R(-5,10);
+    const rhs=a*ans-b;
+    return{type:'algebra',question:`Find x`,math:`${a}(x + ${b}) = ${a*(ans+b)}`,answer:ans,solution:`x + ${b} = ${ans+b}, x = ${ans}`}
+  }
+}
+function mediumWord(){
+  const templates=[
+    ()=>{const p=R(5,20)*100,r=pick([5,8,10,12]);const i=p*r/100;return{q:`Virtue invests ₦${p.toLocaleString()} at ${r}% simple interest per year. How much interest does she earn in 1 year?`,ans:i,sol:`₦${p.toLocaleString()} × ${r}/100 = ₦${i.toLocaleString()}`}},
+    ()=>{const s=R(5,15),p=R(200,800);const t=s*p;return{q:`A restaurant sold ${s} plates of food at ₦${p} each. What is the total revenue?`,ans:t,sol:`${s} × ₦${p} = ₦${t.toLocaleString()}`}},
+    ()=>{const a=R(3,8),b=R(2,5),c=R(4,10);const t=a+b+c,avg=((a+b+c)/3);return{q:`Virtue scored ${a}, ${b}, and ${c} in three tests. What is her average score?`,ans:Math.round(avg*10)/10,sol:`(${a}+${b}+${c}) ÷ 3 = ${t}/3 ≈ ${Math.round(avg*10)/10}`}},
+  ];
+  const t=pick(templates)();
+  return{type:'word',question:t.q,math:'',answer:t.ans,solution:t.sol}
+}
+
+// ── HARD ──────────────────────────────
+function hardAlgebra(){
+  const type=R(1,5);
+  if(type===1){
+    // Quadratic with nice roots
+    const r1=R(1,8),r2=R(1,8);
+    const b=-(r1+r2),c=r1*r2;
+    const bStr=b<0?`${b}`:`+${b}`;
+    const cStr=c<0?`${c}`:`+${c}`;
+    return{type:'algebra',question:`Solve: find the positive root of`,math:`x² ${bStr}x ${cStr} = 0`,answer:Math.max(r1,r2),solution:`Roots are x = ${r1} and x = ${r2}. Positive root = ${Math.max(r1,r2)}`}
+  }else if(type===2){
+    // Simultaneous: ax+by=c, dx+ey=f → solve for x
+    const x=R(1,8),y=R(1,8);
+    const a=R(2,5),b=R(2,5),d=R(2,5),e=R(2,5);
+    const c=a*x+b*y,f=d*x+e*y;
+    return{type:'algebra',question:`Solve simultaneously. Find x:\n${a}x + ${b}y = ${c}\n${d}x + ${e}y = ${f}`,math:'',answer:x,solution:`x = ${x}, y = ${y}`}
+  }else if(type===3){
+    // Inequalities
+    const a=R(2,6),b=R(5,20),ans=Math.ceil((b+1)/a);
+    return{type:'algebra',question:`Find the smallest integer x satisfying`,math:`${a}x − ${b} > ${a*ans-b-a}`,answer:ans,solution:`${a}x > ${b+(a*ans-b-a)}, x > ${(b+(a*ans-b-a))/a}, smallest integer = ${ans}`}
+  }else if(type===4){
+    // Exponents
+    const base=pick([2,3,4,5]),exp=R(3,6);
+    const ans=Math.pow(base,exp);
+    return{type:'algebra',question:`Calculate`,math:`${base}^${exp}`,answer:ans,solution:`${base}^${exp} = ${ans}`}
+  }else{
+    // Fraction equation: (ax+b)/c = d → x = ?
+    const c=R(2,6),d=R(3,10),a=R(2,5),b=R(1,8);
+    const x=(c*d-b)/a;
+    if(!Number.isInteger(x)) return hardAlgebra();
+    return{type:'algebra',question:`Solve for x`,math:`(${a}x + ${b}) / ${c} = ${d}`,answer:x,solution:`${a}x + ${b} = ${c*d}, ${a}x = ${c*d-b}, x = ${x}`}
+  }
+}
+function hardWord(){
+  const templates=[
+    ()=>{
+      const total=R(8,20),ratio1=R(2,4),ratio2=R(2,4);
+      const parts=ratio1+ratio2;
+      const a=Math.round((ratio1/parts)*total*1000)/1000;
+      if(!Number.isInteger(a)){return null}
+      return{q:`₦${total*1000} is shared in the ratio ${ratio1}:${ratio2}. What is the larger share in naira?`,ans:Math.max(ratio1,ratio2)/parts*total*1000,sol:`Total parts=${parts}. Larger = (${Math.max(r1,r2)}/${parts})×${total*1000}`}
+    },
+    ()=>{
+      const speed=pick([40,50,60,80,100]),time=R(2,6);
+      const dist=speed*time;
+      return{q:`A car travels at ${speed} km/h for ${time} hours. If it then travels ${dist/2} km more at the same speed, what is the total distance covered?`,ans:dist+dist/2,sol:`First leg: ${dist} km. Second leg: ${dist/2} km. Total: ${dist+dist/2} km`}
+    },
+    ()=>{
+      const workers=R(4,8),days=R(5,10),extra=R(1,3);
+      const total=workers*days;
+      const newDays=total/(workers+extra);
+      if(!Number.isInteger(newDays)){return null}
+      return{q:`${workers} workers can complete a job in ${days} days. If ${extra} more workers join, how many days will it take?`,ans:newDays,sol:`Total work = ${total} man-days. New days = ${total}/(${workers+extra}) = ${newDays}`}
+    },
+    ()=>{
+      const cp=R(5,20)*1000,profit=pick([10,15,20,25]);
+      const sp=cp*(1+profit/100);
+      return{q:`A bag is bought for ₦${cp.toLocaleString()} and sold at a ${profit}% profit. What is the selling price?`,ans:sp,sol:`SP = ₦${cp.toLocaleString()} × ${1+profit/100} = ₦${sp.toLocaleString()}`}
+    },
+    ()=>{
+      const p=R(5,20)*1000,r=pick([5,10,15,20]),t=R(2,5);
+      const ci=Math.round(p*Math.pow(1+r/100,t));
+      return{q:`What is the compound interest amount on ₦${p.toLocaleString()} at ${r}% per annum for ${t} years? (round to nearest naira)`,ans:ci,sol:`A = ${p.toLocaleString()} × (1+${r/100})^${t} ≈ ₦${ci.toLocaleString()}`}
+    },
+    ()=>{
+      const a=R(3,9),b=R(3,9),c=R(3,9);
+      const lcm=(x,y)=>{const gcd=(a,b)=>b?gcd(b,a%b):a;return x*y/gcd(x,y)};
+      const ans=lcm(lcm(a,b),c);
+      return{q:`Find the LCM of ${a}, ${b}, and ${c}.`,ans:ans,sol:`LCM(${a}, ${b}, ${c}) = ${ans}`}
+    },
+    ()=>{
+      const total=R(40,80),girls=R(15,total-10);
+      const boys=total-girls;
+      const pct=Math.round((girls/total)*100);
+      return{q:`A class has ${total} students. ${girls} are girls. What percentage of the class are boys?`,ans:100-pct,sol:`Boys = ${boys}/${total} × 100 = ${100-pct}%`}
+    },
+    ()=>{
+      const base=R(5,15),height=R(4,12);
+      return{q:`A triangle has a base of ${base} cm and a height of ${height} cm. What is its area in cm²?`,ans:0.5*base*height,sol:`Area = ½ × ${base} × ${height} = ${0.5*base*height} cm²`}
+    },
+  ];
+  let t=null;let tries=0;
+  while(!t && tries<10){const f=pick(templates);t=f();tries++}
+  if(!t){return hardAlgebra()}
+  return{type:'word',question:t.q,math:'',answer:t.ans,solution:t.sol}
+}
+
+function generateQuestion(diff){
+  if(diff==='easy'){
+    return pick([easyArithmetic,easyArithmetic,easyAlgebra])();
+  }else if(diff==='medium'){
+    return pick([mediumArithmetic,mediumArithmetic,mediumAlgebra,mediumWord])();
+  }else{
+    return pick([hardAlgebra,hardAlgebra,hardWord,hardWord])();
+  }
+}
+
+// ════════════════════════════════════════
+//  GAME STATE
+// ════════════════════════════════════════
+const STORAGE_KEY='virtue_math_v1';
+let state={diff:null,score:0,streak:0,bestStreak:0,correct:0,total:0,currentQ:null};
+
+function loadHS(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch{return{}}
+}
+function saveHS(diff,score){
+  const d=loadHS();
+  if(!d[diff]||score>d[diff])d[diff]=score;
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(d));
+  return d[diff]===score&&score>0;
+}
+
+// ════════════════════════════════════════
+//  SCREENS
+// ════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── Welcome ──
+const hs=loadHS();
+const allHS=Object.values(hs);
+if(allHS.length){
+  document.getElementById('hs-banner').classList.add('show');
+  document.getElementById('hs-val').textContent=`${Math.max(...allHS)} pts`;
+}
+
+document.querySelectorAll('.diff-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.diff=card.dataset.diff;
+    const btn=document.getElementById('start-btn');
+    btn.textContent='Begin Session';
+    btn.disabled=false;
+  });
+});
+
+document.getElementById('start-btn').addEventListener('click',startGame);
+
+// ── Quiz ──
+function startGame(){
+  state.score=0;state.streak=0;state.bestStreak=0;state.correct=0;state.total=0;
+  document.getElementById('diff-label-header').textContent=`— ${state.diff.charAt(0).toUpperCase()+state.diff.slice(1)}`;
+  showScreen('screen-quiz');
+  loadQuestion();
+}
+
+const STREAK_MSGS=['','','Keep it up! ✨','On a roll! 🌸','You\'re glowing! 🔥','Unstoppable! 💫','Mind like a blade! 🧠✨','Genius mode: ON 👑','Are you even human?! 🌟'];
+
+function loadQuestion(){
+  state.total++;
+  state.currentQ=generateQuestion(state.diff);
+  const q=state.currentQ;
+
+  // type badge
+  const badge=document.getElementById('q-type-badge');
+  badge.className='q-type-badge';
+  if(q.type==='arithmetic'){badge.classList.add('type-arithmetic');badge.textContent='Arithmetic'}
+  else if(q.type==='algebra'){badge.classList.add('type-algebra');badge.textContent='Algebra'}
+  else{badge.classList.add('type-word');badge.textContent='Word Problem'}
+
+  document.getElementById('q-number').textContent=`Question ${state.total}`;
+
+  // question display
+  const qEl=document.getElementById('question-text');
+  if(q.math){
+    qEl.innerHTML=`${q.question}<span class="math">${q.math.replace(/\n/g,'<br/>')}</span>`;
+  }else{
+    qEl.innerHTML=q.question;
+  }
+
+  // reset input
+  const inp=document.getElementById('answer-input');
+  inp.value='';inp.className='answer-input';inp.disabled=false;inp.focus();
+
+  // reset feedback
+  const fb=document.getElementById('feedback-box');
+  fb.className='feedback-box';fb.innerHTML='';
+
+  document.getElementById('next-btn').classList.remove('show');
+
+  // stats
+  document.getElementById('stat-score').textContent=state.score;
+  document.getElementById('stat-streak').innerHTML=`${state.streak} <span class="streak-fire"></span>`;
+  document.getElementById('stat-q').textContent=state.total;
+
+  // streak msg
+  const si=Math.min(state.streak,STREAK_MSGS.length-1);
+  document.getElementById('streak-msg').textContent=STREAK_MSGS[si];
+}
+
+function checkAnswer(){
+  const inp=document.getElementById('answer-input');
+  const raw=inp.value.trim();
+  if(!raw)return;
+
+  const userAns=parseFloat(raw);
+  const correct=state.currentQ.answer;
+  const isCorrect=Math.abs(userAns-correct)<0.05;
+
+  inp.disabled=true;
+  const fb=document.getElementById('feedback-box');
+
+  if(isCorrect){
+    inp.classList.add('correct');
+    const pts=state.diff==='easy'?10:state.diff==='medium'?20:30;
+    const bonus=state.streak>=3?Math.floor(pts*0.5):0;
+    state.score+=pts+bonus;
+    state.streak++;
+    state.correct++;
+    if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+    fb.className='feedback-box correct';
+    fb.innerHTML=bonus?`✓ Correct! +${pts} pts <strong style="color:#C9943A">(+${bonus} streak bonus!)</strong>`:`✓ Correct! +${pts} pts`;
+  }else{
+    inp.classList.add('wrong');
+    state.streak=0;
+    fb.className='feedback-box wrong';
+    fb.innerHTML=`✗ Not quite. <span class="solution">Answer: ${state.currentQ.solution}</span>`;
+  }
+
+  document.getElementById('stat-score').textContent=state.score;
+  document.getElementById('stat-streak').innerHTML=`${state.streak} <span class="streak-fire">🔥</span>`;
+  document.getElementById('next-btn').classList.add('show');
+}
+
+document.getElementById('submit-btn').addEventListener('click',checkAnswer);
+document.getElementById('answer-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(!document.getElementById('next-btn').classList.contains('show'))checkAnswer();
+    else loadQuestion();
+  }
+});
+document.getElementById('next-btn').addEventListener('click',loadQuestion);
+document.getElementById('quit-btn').addEventListener('click',endGame);
+
+// ── End ──
+function endGame(){
+  const isNewHS=saveHS(state.diff,state.score);
+  document.getElementById('end-score').textContent=state.score;
+  document.getElementById('end-correct').textContent=state.correct;
+  document.getElementById('end-streak').textContent=state.bestStreak;
+  document.getElementById('end-total').textContent=state.total-1;
+
+  const pct=state.total>1?Math.round((state.correct/(state.total-1))*100):0;
+  let trophy='🌸',title='Keep practising, Virtue!',msg='Every session makes you sharper. Come back and beat your score!';
+  if(pct>=90){trophy='👑';title='Absolutely brilliant, Virtue!';msg='You solved almost everything perfectly. Your mind is razor sharp. 🧠✨'}
+  else if(pct>=70){trophy='🏆';title='Impressive, Virtue!';msg='You got through those with real focus. That\'s your strength showing. 💪'}
+  else if(pct>=50){trophy='✨';title='Good session, Virtue!';msg='More than half right — keep pushing. You\'re building something sharp. 🌸'}
+
+  document.getElementById('end-trophy').textContent=trophy;
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-msg').textContent=msg;
+  document.getElementById('new-hs-badge').classList.toggle('show',isNewHS);
+
+  // Update welcome HS
+  const allHS2=Object.values(loadHS());
+  if(allHS2.length){
+    document.getElementById('hs-banner').classList.add('show');
+    document.getElementById('hs-val').textContent=`${Math.max(...allHS2)} pts`;
+  }
+
+  showScreen('screen-end');
+  if(pct>=70)launchConfetti();
+}
+
+document.getElementById('play-again-btn').addEventListener('click',startGame);
+document.getElementById('change-diff-btn').addEventListener('click',()=>{
+  document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('selected'));
+  state.diff=null;
+  const btn=document.getElementById('start-btn');
+  btn.textContent='Pick a difficulty to begin';btn.disabled=true;
+  showScreen('screen-welcome');
+});
+
+// ── Confetti ──
+function launchConfetti(){
+  const canvas=document.getElementById('confetti');
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const colors=['#A0522D','#C4845A','#E8C4A2','#C9943A','#F0D080','#F5E6D8','#fff','#6B3A1F'];
+  const p=Array.from({length:100},()=>({x:Math.random()*canvas.width,y:Math.random()*-canvas.height,r:Math.random()*6+3,d:Math.random()*3+1,color:colors[Math.floor(Math.random()*colors.length)],ta:0,ts:Math.random()*0.07+0.05}));
+  let f=0;
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);p.forEach(q=>{ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,Math.PI*2);ctx.fillStyle=q.color;ctx.fill();q.y+=q.d;q.x+=Math.sin(q.ta)*1.5;q.ta+=q.ts;if(q.y>canvas.height){q.y=-10;q.x=Math.random()*canvas.width}});f++;if(f<200)requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height)}
+  draw();
+}
+</script>
+</body>
+</html>
