@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtue's Habits 💪</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --brown-deep:#3E1F00;--brown-rich:#6B3A1F;--brown-warm:#A0522D;
+      --brown-mid:#C4845A;--brown-light:#E8C4A2;--brown-blush:#F5E6D8;
+      --cream:#FDF6EE;--gold:#C9943A;--gold-light:#F0D080;
+      --green:#2D6A4F;--green-bg:#EDFAF4;--green-border:#B2E5CC;
+      --text-dark:#2A1200;--text-mid:#6B4226;--text-soft:#9B6B4A;
+    }
+    body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--text-dark);min-height:100vh;padding-bottom:60px}
+
+    /* ── HEADER ── */
+    .header{background:linear-gradient(135deg,var(--brown-deep),var(--brown-rich));padding:28px 24px 28px}
+    .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--brown-light);text-decoration:none;font-size:12px;font-weight:500;margin-bottom:16px;transition:color 0.2s}
+    .back-link:hover{color:#fff}
+    .header-inner{max-width:700px;margin:0 auto}
+    .header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    .header-title{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,32px);font-weight:700;color:#fff}
+    .header-sub{font-size:12px;color:var(--brown-light);margin-top:2px}
+    .new-btn{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--brown-deep);border:none;border-radius:99px;padding:12px 22px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(201,148,58,0.3);transition:transform 0.2s;white-space:nowrap}
+    .new-btn:hover{transform:translateY(-2px)}
+
+    /* date strip */
+    .date-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+    .date-chip{
+      flex-shrink:0;text-align:center;padding:8px 10px;border-radius:12px;
+      background:rgba(255,255,255,0.08);cursor:pointer;transition:background 0.2s;min-width:44px;
+    }
+    .date-chip.today{background:rgba(255,255,255,0.18);outline:1.5px solid rgba(255,255,255,0.4)}
+    .date-chip .chip-day{font-size:10px;color:var(--brown-light);letter-spacing:0.5px;text-transform:uppercase}
+    .date-chip .chip-num{font-family:'Playfair Display',serif;font-size:16px;color:#fff;font-weight:700}
+
+    /* ── BODY ── */
+    .body-wrap{max-width:700px;margin:0 auto;padding:24px}
+
+    /* today summary */
+    .today-summary{
+      background:#fff;border:1px solid var(--brown-light);border-radius:18px;
+      padding:18px 20px;margin-bottom:22px;
+      display:flex;align-items:center;gap:16px;
+    }
+    .summary-ring-wrap{flex-shrink:0}
+    .summary-ring{
+      width:56px;height:56px;border-radius:50%;
+      background:conic-gradient(var(--gold) calc(var(--pct,0)*1%), var(--brown-blush) 0);
+      display:flex;align-items:center;justify-content:center;position:relative;
+    }
+    .summary-ring::after{content:'';position:absolute;inset:6px;border-radius:50%;background:#fff}
+    .summary-ring span{position:relative;z-index:1;font-size:12px;font-weight:700;color:var(--brown-warm)}
+    .summary-text h3{font-family:'Playfair Display',serif;font-size:16px;color:var(--brown-deep)}
+    .summary-text p{font-size:12.5px;color:var(--text-soft);margin-top:2px}
+    .motivational-msg{font-size:12px;color:var(--brown-warm);font-style:italic;margin-top:4px}
+
+    /* habit cards */
+    .section-label{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-soft);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--brown-light)}
+
+    .habit-card{
+      background:#fff;border:1px solid var(--brown-light);border-radius:18px;
+      padding:16px 18px;margin-bottom:10px;
+      display:flex;align-items:center;gap:14px;
+      transition:box-shadow 0.2s,transform 0.2s;
+    }
+    .habit-card:hover{box-shadow:0 6px 20px rgba(107,58,31,0.10);transform:translateY(-1px)}
+    .habit-card.done-today{border-color:var(--green-border);background:var(--green-bg)}
+
+    .habit-icon-wrap{
+      width:46px;height:46px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;flex-shrink:0;
+    }
+    .habit-body{flex:1;min-width:0}
+    .habit-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--brown-deep)}
+    .habit-streak{font-size:12px;color:var(--text-soft);margin-top:3px;display:flex;align-items:center;gap:4px}
+    .streak-fire{font-size:13px}
+
+    /* week dots */
+    .week-dots{display:flex;gap:5px;margin-top:8px}
+    .week-dot{
+      width:22px;height:22px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:9px;font-weight:600;color:var(--text-soft);
+      background:var(--brown-blush);border:1.5px solid var(--brown-light);
+      flex-shrink:0;
+    }
+    .week-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+    .week-dot.today-dot{border-color:var(--brown-warm)}
+
+    .check-btn{
+      width:36px;height:36px;border-radius:50%;flex-shrink:0;
+      border:2px solid var(--brown-light);background:#fff;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all 0.2s;font-size:16px;
+    }
+    .check-btn.checked{background:var(--green);border-color:var(--green)}
+    .check-btn svg{display:none}
+    .check-btn.checked svg{display:block}
+
+    .habit-menu-btn{background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-soft);padding:4px;transition:color 0.2s}
+    .habit-menu-btn:hover{color:var(--brown-warm)}
+
+    /* empty */
+    .empty-state{text-align:center;padding:60px 24px;color:var(--text-soft)}
+    .empty-state .emoji{font-size:44px;margin-bottom:14px}
+    .empty-state h3{font-family:'Playfair Display',serif;color:var(--brown-deep);font-size:18px;margin-bottom:6px}
+    .empty-state p{font-size:13px;max-width:280px;margin:0 auto;line-height:1.6}
+
+    /* loading */
+    .loading{text-align:center;padding:60px 24px;color:var(--text-soft);font-size:13px}
+    .spinner{width:28px;height:28px;border:3px solid var(--brown-light);border-top-color:var(--brown-warm);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── PANEL ── */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(62,31,0,0.45);z-index:100;backdrop-filter:blur(2px)}
+    .overlay.show{display:block}
+    .panel{position:fixed;left:0;right:0;bottom:0;background:var(--cream);border-radius:24px 24px 0 0;max-width:700px;margin:0 auto;padding:24px 24px 28px;z-index:101;transform:translateY(100%);transition:transform 0.3s cubic-bezier(.25,.8,.25,1);max-height:88vh;overflow-y:auto}
+    .panel.show{transform:translateY(0)}
+    .panel-handle{width:40px;height:4px;background:var(--brown-light);border-radius:99px;margin:0 auto 18px}
+    .panel-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown-deep);margin-bottom:18px}
+    .field{margin-bottom:16px}
+    .field-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-soft);font-weight:600;margin-bottom:7px;display:block}
+    .field input[type="text"]{width:100%;border:1.5px solid var(--brown-light);border-radius:12px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;background:#fff;outline:none;color:var(--text-dark)}
+    .field input:focus{border-color:var(--brown-warm)}
+
+    .icon-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .icon-opt{width:44px;height:44px;border-radius:12px;border:2px solid var(--brown-light);background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all 0.2s}
+    .icon-opt.selected{border-color:var(--brown-warm);background:var(--brown-blush)}
+
+    .color-row{display:flex;gap:10px;flex-wrap:wrap}
+    .color-dot-opt{width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s}
+    .color-dot-opt.selected{border-color:var(--brown-deep);transform:scale(1.15)}
+
+    .panel-btns{display:flex;gap:10px;margin-top:6px}
+    .save-btn{flex:1;background:linear-gradient(135deg,var(--brown-rich),var(--brown-warm));color:#fff;border:none;border-radius:14px;padding:15px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .cancel-btn{background:#fff;border:1.5px solid var(--brown-light);color:var(--text-mid);border-radius:14px;padding:15px 22px;font-size:14.5px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .delete-link{text-align:center;margin-top:14px;font-size:12.5px;color:#9B2020;cursor:pointer;font-weight:500}
+
+    /* toast */
+    .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--brown-deep);color:#fff;border-radius:99px;padding:12px 24px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    @media(max-width:480px){
+      .header{padding:22px 16px 22px}
+      .body-wrap{padding:18px 16px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="../" class="back-link">← Back to Hub</a>
+    <div class="header-inner">
+      <div class="header-top">
+        <div>
+          <div class="header-title">Virtue's Habits <i class="fa-solid fa-fire"></i></div>
+          <div class="header-sub">Small steps, every day.</div>
+        </div>
+        <button class="new-btn" id="new-habit-btn">+ New Habit</button>
+      </div>
+      <div class="date-strip" id="date-strip"></div>
+    </div>
+  </div>
+
+  <div class="body-wrap">
+    <div class="today-summary" id="today-summary" style="display:none">
+      <div class="summary-ring-wrap">
+        <div class="summary-ring" id="summary-ring" style="--pct:0">
+          <span id="summary-pct">0%</span>
+        </div>
+      </div>
+      <div class="summary-text">
+        <h3 id="summary-title">Today's habits</h3>
+        <p id="summary-sub">0 of 0 done</p>
+        <div class="motivational-msg" id="motivational-msg"></div>
+      </div>
+    </div>
+
+    <div class="section-label">Your Habits</div>
+    <div id="habits-list"><div class="loading"><div class="spinner"></div>Loading your habits…</div></div>
+  </div>
+
+  <!-- PANEL -->
+  <div class="overlay" id="overlay"></div>
+  <div class="panel" id="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-title" id="panel-title">New Habit</div>
+
+    <div class="field">
+      <label class="field-label">Habit Name</label>
+      <input type="text" id="f-name" placeholder="e.g. Morning walk, Read 20 pages…"/>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Icon</label>
+      <div class="icon-grid" id="icon-grid"></div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Colour</label>
+      <div class="color-row" id="color-row"></div>
+    </div>
+
+    <div class="panel-btns">
+      <button class="cancel-btn" id="cancel-btn">Cancel</button>
+      <button class="save-btn" id="save-btn">Save Habit</button>
+    </div>
+    <div class="delete-link" id="delete-link" style="display:none">Delete this habit</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://xkrddzphzgfxrednxvsb.supabase.co';
+const SUPABASE_KEY='sb_publishable_rTuJfAPMkdzIVefPuMnaqA_Y-bagxcI';
+const H={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+
+const ICONS=['🏃‍♀️','📚','💧','🧘‍♀️','✍️','🥗','😴','💊','🏋️‍♀️','🧴','📖','🎯','🌿','💪','🛁','🙏','🎨','🎵','📝','☀️','🌙','💌','🧠','🍎'];
+const COLORS=['#A0522D','#C9943A','#2D8A6E','#7B6CB5','#C5577B','#4A90D9','#E07B54','#5C8A3C'];
+
+let habits=[];
+let logs={}; // {habit_id: Set of date strings}
+let editingHabitId=null;
+let selectedIcon=ICONS[0];
+let selectedColor=COLORS[0];
+
+function todayStr(){return new Date().toISOString().split('T')[0]}
+function dateStrOf(d){return d.toISOString().split('T')[0]}
+
+/* ── SUPABASE ── */
+async function fetchHabits(){
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/habits?order=created_at.asc`,{headers:H});
+  if(!res.ok)return;
+  habits=await res.json();
+}
+
+async function fetchLogs(){
+  // fetch last 30 days
+  const from=new Date();from.setDate(from.getDate()-29);
+  const fromStr=dateStrOf(from);
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?logged_date=gte.${fromStr}&order=logged_date.asc`,{headers:H});
+  if(!res.ok)return;
+  const rows=await res.json();
+  logs={};
+  rows.forEach(r=>{
+    if(!logs[r.habit_id])logs[r.habit_id]=new Set();
+    logs[r.habit_id].add(r.logged_date);
+  });
+}
+
+async function toggleLog(habitId,dateStr){
+  const done=logs[habitId]&&logs[habitId].has(dateStr);
+  if(done){
+    await fetch(`${SUPABASE_URL}/rest/v1/habit_logs?habit_id=eq.${habitId}&logged_date=eq.${dateStr}`,{method:'DELETE',headers:H});
+    logs[habitId].delete(dateStr);
+  }else{
+    await fetch(`${SUPABASE_URL}/rest/v1/habit_logs`,{
+      method:'POST',headers:{...H,'Prefer':'return=representation'},
+      body:JSON.stringify({habit_id:habitId,logged_date:dateStr})
+    });
+    if(!logs[habitId])logs[habitId]=new Set();
+    logs[habitId].add(dateStr);
+  }
+}
+
+async function createHabit(name,icon,color){
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/habits`,{
+    method:'POST',headers:{...H,'Prefer':'return=representation'},
+    body:JSON.stringify({name,icon,color})
+  });
+  const created=await res.json();
+  habits.push(created[0]);
+}
+
+async function updateHabit(id,name,icon,color){
+  await fetch(`${SUPABASE_URL}/rest/v1/habits?id=eq.${id}`,{
+    method:'PATCH',headers:H,
+    body:JSON.stringify({name,icon,color})
+  });
+  const h=habits.find(x=>x.id===id);
+  if(h){h.name=name;h.icon=icon;h.color=color}
+}
+
+async function deleteHabit(id){
+  await fetch(`${SUPABASE_URL}/rest/v1/habits?id=eq.${id}`,{method:'DELETE',headers:H});
+  habits=habits.filter(x=>x.id!==id);
+  delete logs[id];
+}
+
+/* ── DATE STRIP ── */
+function renderDateStrip(){
+  const strip=document.getElementById('date-strip');
+  const today=new Date();
+  strip.innerHTML='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const ds=dateStrOf(d);
+    const isToday=i===0;
+    const chip=document.createElement('div');
+    chip.className='date-chip'+(isToday?' today':'');
+    chip.innerHTML=`<div class="chip-day">${d.toLocaleDateString('en-GB',{weekday:'short'})}</div><div class="chip-num">${d.getDate()}</div>`;
+    strip.appendChild(chip);
+  }
+}
+
+/* ── STREAK CALC ── */
+function calcStreak(habitId){
+  const set=logs[habitId]||new Set();
+  let streak=0;
+  const d=new Date();
+  while(true){
+    const ds=dateStrOf(d);
+    if(set.has(ds)){streak++;d.setDate(d.getDate()-1)}
+    else break;
+  }
+  return streak;
+}
+
+/* ── RENDER ── */
+const MOTIVATIONAL_MSGS=[
+  'Start with one. Just one. 🌱',
+  'One done — keep that momentum! ✨',
+  'You\'re building something great! 🌸',
+  'More than halfway — incredible! 💫',
+  'Almost there, you\'re glowing! 🔥',
+  'Every single one. That\'s discipline! 👑',
+];
+
+function renderHabits(){
+  const container=document.getElementById('habits-list');
+  const today=todayStr();
+
+  if(habits.length===0){
+    document.getElementById('today-summary').style.display='none';
+    container.innerHTML=`
+      <div class="empty-state">
+        <div class="emoji">💪</div>
+        <h3>No habits yet</h3>
+        <p>Tap "+ New Habit" to start building routines that stick.</p>
+      </div>`;
+    return;
+  }
+
+  // summary
+  const done=habits.filter(h=>logs[h.id]&&logs[h.id].has(today)).length;
+  const total=habits.length;
+  const pct=Math.round((done/total)*100);
+  document.getElementById('today-summary').style.display='flex';
+  document.getElementById('summary-ring').style.setProperty('--pct',pct);
+  document.getElementById('summary-pct').textContent=pct+'%';
+  document.getElementById('summary-title').textContent=`${done} of ${total} done today`;
+  document.getElementById('summary-sub').textContent=done===total?'All habits complete! 🎉':pct+'% of today\'s habits';
+  const mi=Math.min(done,MOTIVATIONAL_MSGS.length-1);
+  document.getElementById('motivational-msg').textContent=MOTIVATIONAL_MSGS[mi];
+
+  // get last 7 days
+  const last7=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push({ds:dateStrOf(d),label:d.toLocaleDateString('en-GB',{weekday:'short'}).charAt(0)})}
+
+  container.innerHTML=habits.map(h=>{
+    const isDoneToday=logs[h.id]&&logs[h.id].has(today);
+    const streak=calcStreak(h.id);
+    return `
+      <div class="habit-card ${isDoneToday?'done-today':''}" data-id="${h.id}">
+        <div class="habit-icon-wrap" style="background:${h.color}22">${h.icon||'💪'}</div>
+        <div class="habit-body">
+          <div class="habit-name">${escapeHtml(h.name)}</div>
+          <div class="habit-streak">
+            <span class="streak-fire">🔥</span>
+            ${streak} day streak
+          </div>
+          <div class="week-dots">
+            ${last7.map(({ds,label})=>{
+              const done=logs[h.id]&&logs[h.id].has(ds);
+              const isToday=ds===today;
+              return `<div class="week-dot ${done?'done':''} ${isToday?'today-dot':''}" title="${ds}">${label}</div>`;
+            }).join('')}
+          </div>
+        </div>
+        <button class="check-btn ${isDoneToday?'checked':''}" data-id="${h.id}" title="${isDoneToday?'Mark undone':'Mark done'}">
+          <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+            <path d="M1 4L4 7.5L10 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="habit-menu-btn" data-id="${h.id}" title="Edit">✎</button>
+      </div>`;
+  }).join('');
+
+  // check buttons
+  container.querySelectorAll('.check-btn').forEach(btn=>{
+    btn.addEventListener('click',async e=>{
+      e.stopPropagation();
+      const id=btn.dataset.id;
+      btn.disabled=true;
+      await toggleLog(id,today);
+      renderHabits();
+    });
+  });
+
+  // edit buttons
+  container.querySelectorAll('.habit-menu-btn').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      openPanel(btn.dataset.id);
+    });
+  });
+}
+
+function escapeHtml(str){const d=document.createElement('div');d.textContent=str;return d.innerHTML}
+
+/* ── PANEL ── */
+function renderIconGrid(){
+  document.getElementById('icon-grid').innerHTML=ICONS.map(ic=>`
+    <div class="icon-opt ${ic===selectedIcon?'selected':''}" data-icon="${ic}">${ic}</div>
+  `).join('');
+  document.querySelectorAll('.icon-opt').forEach(el=>{
+    el.addEventListener('click',()=>{selectedIcon=el.dataset.icon;renderIconGrid()});
+  });
+}
+
+function renderColorRow(){
+  document.getElementById('color-row').innerHTML=COLORS.map(c=>`
+    <div class="color-dot-opt ${c===selectedColor?'selected':''}" style="background:${c}" data-color="${c}"></div>
+  `).join('');
+  document.querySelectorAll('.color-dot-opt').forEach(el=>{
+    el.addEventListener('click',()=>{selectedColor=el.dataset.color;renderColorRow()});
+  });
+}
+
+function openPanel(id=null){
+  editingHabitId=id;
+  if(id){
+    const h=habits.find(x=>x.id===id);
+    document.getElementById('panel-title').textContent='Edit Habit';
+    document.getElementById('f-name').value=h.name;
+    selectedIcon=h.icon||ICONS[0];
+    selectedColor=h.color||COLORS[0];
+    document.getElementById('delete-link').style.display='block';
+  }else{
+    document.getElementById('panel-title').textContent='New Habit';
+    document.getElementById('f-name').value='';
+    selectedIcon=ICONS[0];selectedColor=COLORS[0];
+    document.getElementById('delete-link').style.display='none';
+  }
+  renderIconGrid();renderColorRow();
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('panel').classList.add('show');
+  setTimeout(()=>document.getElementById('f-name').focus(),300);
+}
+
+function closePanel(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+  editingHabitId=null;
+}
+
+document.getElementById('new-habit-btn').addEventListener('click',()=>openPanel());
+document.getElementById('cancel-btn').addEventListener('click',closePanel);
+document.getElementById('overlay').addEventListener('click',closePanel);
+
+document.getElementById('save-btn').addEventListener('click',async()=>{
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){document.getElementById('f-name').focus();return}
+  document.getElementById('save-btn').disabled=true;
+  try{
+    if(editingHabitId)await updateHabit(editingHabitId,name,selectedIcon,selectedColor);
+    else await createHabit(name,selectedIcon,selectedColor);
+    closePanel();renderHabits();
+    showToast(editingHabitId?'Habit updated 🤎':'Habit added 🌱');
+  }catch{showToast('Something went wrong. Try again.')}
+  finally{document.getElementById('save-btn').disabled=false}
+});
+
+document.getElementById('delete-link').addEventListener('click',async()=>{
+  if(!confirm('Delete this habit and all its logs? This cannot be undone.'))return;
+  await deleteHabit(editingHabitId);
+  closePanel();renderHabits();
+  showToast('Habit deleted.');
+});
+
+/* ── TOAST ── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ── INIT ── */
+(async()=>{
+  renderDateStrip();
+  await Promise.all([fetchHabits(),fetchLogs()]);
+  renderHabits();
+})();
+</script>
+</body>
+</html>

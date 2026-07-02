@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Virtue's Hub 🤎</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -170,8 +170,9 @@
     .card-icon{
       width:50px;height:50px;border-radius:14px;
       display:flex;align-items:center;justify-content:center;
-      font-size:24px;
+      font-size:20px;
       background:var(--brown-blush);
+      color:var(--brown-warm);
     }
     .card-status{
       font-size:10px;letter-spacing:1px;text-transform:uppercase;
@@ -230,7 +231,7 @@
 
   <div class="note-wrap">
     <div class="note-card">
-      <div class="note-mark">💌</div>
+      <div class="note-mark"><i class="fa-solid fa-heart" style="color:var(--brown-deep);font-size:13px"></i></div>
       <div class="note-label">A Note From Prince</div>
       <p class="note-body">I built this for you because I wanted you to have a space that's entirely yours — somewhere to plan, write, play, and breathe. Every little detail in here was made with you in mind. I hope it makes your days a little lighter, love.</p>
       <div class="note-sign">— Always yours 🤎</div>
@@ -241,7 +242,7 @@
     <div class="section-eyebrow">Choose Your Space</div>
     <div class="card-grid">
 
-      <a href="./tasks/" class="nav-card">
+      <a href="./task-dashboard/index.html" class="nav-card">
         <div class="card-top">
           <div class="card-icon"><i class="fa-solid fa-list-check"></i></div>
           <span class="card-status status-ready">Ready</span>
@@ -251,9 +252,9 @@
         <div class="card-arrow">Open →</div>
       </a>
 
-      <a href="./math/" class="nav-card">
+      <a href="./math-sanctuary/index.html" class="nav-card">
         <div class="card-top">
-          <div class="card-icon"><i class="fa-solid fa-calculator"></i></div>
+          <div class="card-icon"><i class="fa-solid fa-square-root-variable"></i></div>
           <span class="card-status status-ready">Ready</span>
         </div>
         <div class="card-title">Math Sanctuary</div>
@@ -261,15 +262,45 @@
         <div class="card-arrow">Open →</div>
       </a>
 
-      <div class="nav-card disabled">
+      <a href="./personal-planner/index.html" class="nav-card">
         <div class="card-top">
           <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
-          <span class="card-status status-soon">Coming Soon</span>
+          <span class="card-status status-ready">Ready</span>
         </div>
         <div class="card-title">Personal Planner</div>
         <div class="card-desc">Plan your days and weeks in colour-coded time blocks, exactly how you like things.</div>
-        <div class="card-arrow">Soon →</div>
-      </div>
+        <div class="card-arrow">Open →</div>
+      </a>
+
+      <a href="./private-journal/index.html" class="nav-card">
+        <div class="card-top">
+          <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
+          <span class="card-status status-ready">Ready</span>
+        </div>
+        <div class="card-title">Private Journal</div>
+        <div class="card-desc">A quiet space just for your thoughts. Write freely — it's always here, always yours.</div>
+        <div class="card-arrow">Open →</div>
+      </a>
+
+      <a href="./habit-tracker/index.html" class="nav-card">
+        <div class="card-top">
+          <div class="card-icon"><i class="fa-solid fa-fire"></i></div>
+          <span class="card-status status-ready">Ready</span>
+        </div>
+        <div class="card-title">Habit Tracker</div>
+        <div class="card-desc">Build the routines you're proud of, one day at a time, one streak at a time.</div>
+        <div class="card-arrow">Open →</div>
+      </a>
+
+      <a href="./goals-board/index.html" class="nav-card">
+        <div class="card-top">
+          <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
+          <span class="card-status status-ready">Ready</span>
+        </div>
+        <div class="card-title">Goals Board</div>
+        <div class="card-desc">Your dreams, laid out beautifully — and watch yourself get closer every day.</div>
+        <div class="card-arrow">Open →</div>
+      </a>
 
       <div class="nav-card disabled">
         <div class="card-top">
@@ -278,36 +309,6 @@
         </div>
         <div class="card-title">Jigsaw Puzzle</div>
         <div class="card-desc">A little puzzle made of a picture I treasure. Piece it back together, piece by piece.</div>
-        <div class="card-arrow">Soon →</div>
-      </div>
-
-      <div class="nav-card disabled">
-        <div class="card-top">
-          <div class="card-icon"><i class="fa-solid fa-book"></i></div>
-          <span class="card-status status-soon">Coming Soon</span>
-        </div>
-        <div class="card-title">Private Journal</div>
-        <div class="card-desc">A quiet space just for your thoughts. Write freely — it's always here, always yours.</div>
-        <div class="card-arrow">Soon →</div>
-      </div>
-
-      <div class="nav-card disabled">
-        <div class="card-top">
-          <div class="card-icon"><i class="fa-solid fa-book"></i></div>
-          <span class="card-status status-soon">Coming Soon</span>
-        </div>
-        <div class="card-title">Habit Tracker</div>
-        <div class="card-desc">Build the routines you're proud of, one day at a time, one streak at a time.</div>
-        <div class="card-arrow">Soon →</div>
-      </div>
-
-      <div class="nav-card disabled">
-        <div class="card-top">
-          <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
-          <span class="card-status status-soon">Coming Soon</span>
-        </div>
-        <div class="card-title">Goals Board</div>
-        <div class="card-desc">Your dreams, laid out beautifully — and watch yourself get closer every day.</div>
         <div class="card-arrow">Soon →</div>
       </div>
 
